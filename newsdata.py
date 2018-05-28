@@ -23,7 +23,8 @@ def pop_articles():
 	''')
 	results = c.fetchall()
 	db.close()
-	print results
+	for x, y in results:
+    print "{} – {}".format(x, y)
 
 # 2. Who are the most popular article authors of all time?
 # Ursula La Multa — 2304 views
