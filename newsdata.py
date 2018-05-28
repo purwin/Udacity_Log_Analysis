@@ -8,23 +8,23 @@ from datetime import datetime
 # 1. What are the most popular three articles of all time?
 # "Princess Shellfish Marries Prince Handsome" — 1201 views
 def pop_articles():
-	db = psycopg2.connect("dbname=news")
-	c = db.cursor()
-	c.execute('''
-	  select title, group_articles.c
-	  from articles
-	  join (select path, count(*) as c
-	  from log
-	  where path != '/'
-	  group by log.path) as group_articles
-	  on group_articles.path = concat('/article/', articles.slug)
-	  order by group_articles.c desc
-	  limit 3;
-	''')
-	results = c.fetchall()
-	db.close()
-	for x, y in results:
-    print "{} – {}".format(x, y)
+  db = psycopg2.connect("dbname=news")
+  c = db.cursor()
+  c.execute('''
+    select title, group_articles.c
+    from articles
+    join (select path, count(*) as c
+    from log
+    where path != '/'
+    group by log.path) as group_articles
+    on group_articles.path = concat('/article/', articles.slug)
+    order by group_articles.c desc
+    limit 3;
+  ''')
+  results = c.fetchall()
+  db.close()
+  for x, y in results:
+    print "\"{}\" — {:,} views".format(x, int(y))
 
 # 2. Who are the most popular article authors of all time?
 # Ursula La Multa — 2304 views
@@ -35,3 +35,8 @@ def pop_authors():
 # July 29, 2016 — 2.5% errors
 def pop_days():
   pass
+
+  if __name__ == '__main__':
+    pop_articles()
+    pop_authors()
+    pop_days()
