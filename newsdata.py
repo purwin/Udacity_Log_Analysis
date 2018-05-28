@@ -29,7 +29,23 @@ def pop_articles():
 # 2. Who are the most popular article authors of all time?
 # Ursula La Multa — 2304 views
 def pop_authors():
-  pass
+  db = psycopg2.connect("dbname=news")
+  c = db.cursor()
+  c.execute('''
+    select authors.name, group_authors.c
+    from authors
+    join (select articles.author, count(*) as c
+    from articles
+    join log
+    on log.path = concat('/article/', articles.slug)
+    group by articles.author
+    order by c desc) group_authors
+    on authors.id = group_authors.author;
+  ''')
+  results = c.fetchall()
+  db.close()
+  for x, y in results:
+    print "{} — {:,} views".format(x, int(y))
 
 # 3. On which days did more than 1% of requests lead to errors?
 # July 29, 2016 — 2.5% errors
