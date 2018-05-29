@@ -3,14 +3,11 @@
 import psycopg2
 import datetime
 
-# 1. What are the most popular three articles of all time?
-
-
+# 1. Query the three most popular articles of all time.
 def pop_articles():
     db = psycopg2.connect("dbname=news")
     c = db.cursor()
-    c.execute('''
-    select title, group_articles.c
+    c.execute('''select title, group_articles.c
     from articles
     join (select path, count(*) as c
     from log
@@ -24,14 +21,13 @@ def pop_articles():
     db.close()
     print "1. What are the most popular three articles of all time?"
     for x, y in results:
-      print "\"{}\" — {:,} views".format(x, int(y))
+        print "\"{}\" — {:,} views".format(x, int(y))
 
-# 2. Who are the most popular article authors of all time?
+# 2. Query the most popular article authors of all time.
 def pop_authors():
     db = psycopg2.connect("dbname=news")
     c = db.cursor()
-    c.execute('''
-    select authors.name, group_authors.c
+    c.execute('''select authors.name, group_authors.c
     from authors
     join (select articles.author, count(*) as c
     from articles
@@ -45,15 +41,15 @@ def pop_authors():
     db.close()
     print "\n\n2. Who are the most popular article authors of all time?"
     for x, y in results:
-      print "{} — {:,} views".format(x, int(y))
+        print "{} — {:,} views".format(x, int(y))
 
-# 3. On which days did more than 1% of requests lead to errors?
+# 3. Query the days when more than 1% of requests lead to errors.
 def pop_days():
     db = psycopg2.connect("dbname=news")
     c = db.cursor()
-    c.execute('''
-    select * from 
-    (select time::date as ymd, err.err_count * 100.0 / count(*) as percentage
+    c.execute('''select *
+    from (
+    select time::date as ymd, err.err_count * 100.0 / count(*) as percentage
     from log
     join (select time::date as err_ymd, count(*) as err_count
     from log
@@ -68,10 +64,9 @@ def pop_days():
     db.close()
     print "\n\n3. On which days did more than 1% of requests lead to errors?"
     for x, y in results:
-      print "{} — {}% errors".format(x.strftime('%B %d, %Y'), round(y, 2))
-
+        print "{} — {}% errors".format(x.strftime('%B %d, %Y'), round(y, 2))
 
 if __name__ == '__main__':
-  pop_articles()
-  pop_authors()
-  pop_days()
+    pop_articles()
+    pop_authors()
+    pop_days()
