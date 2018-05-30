@@ -3,16 +3,16 @@
 import psycopg2
 import datetime
 
-# 1. Query the three most popular articles of all time.
-def pop_articles():
+
+def pop_articles():    # 1. Query the three most popular articles of all time.
     db = psycopg2.connect("dbname=news")
     c = db.cursor()
     c.execute('''select title, group_articles.c
     from articles
     join (select path, count(*) as c
-    from log
-    where path != '/'
-    group by log.path) as group_articles
+          from log
+          where path != '/'
+          group by log.path) as group_articles
     on group_articles.path = concat('/article/', articles.slug)
     order by group_articles.c desc
     limit 3;
@@ -23,18 +23,18 @@ def pop_articles():
     for x, y in results:
         print "\"{}\" — {:,} views".format(x, int(y))
 
-# 2. Query the most popular article authors of all time.
-def pop_authors():
+
+def pop_authors():    # 2. Query the most popular article authors of all time.
     db = psycopg2.connect("dbname=news")
     c = db.cursor()
     c.execute('''select authors.name, group_authors.c
     from authors
     join (select articles.author, count(*) as c
-    from articles
-    join log
-    on log.path = concat('/article/', articles.slug)
-    group by articles.author
-    order by c desc) group_authors
+          from articles
+          join log
+          on log.path = concat('/article/', articles.slug)
+          group by articles.author
+          order by c desc) group_authors
     on authors.id = group_authors.author;
     ''')
     results = c.fetchall()
@@ -43,21 +43,21 @@ def pop_authors():
     for x, y in results:
         print "{} — {:,} views".format(x, int(y))
 
-# 3. Query the days when more than 1% of requests lead to errors.
-def pop_days():
+
+def pop_days():    # 3. Query the days when errors > 1%.
     db = psycopg2.connect("dbname=news")
     c = db.cursor()
     c.execute('''select *
-    from (
-    select time::date as ymd, err.err_count * 100.0 / count(*) as percentage
-    from log
-    join (select time::date as err_ymd, count(*) as err_count
-    from log
-    where status != '200 OK'
-    group by err_ymd) as err
-    on time::date = err.err_ymd
-    group by ymd, err.err_count
-    order by percentage desc) as table_err_percent
+    from (select time::date as ymd, err.err_count * 100.0 / count(*)
+          as percentage
+          from log
+          join (select time::date as err_ymd, count(*) as err_count
+                from log
+                where status != '200 OK'
+                group by err_ymd) as err
+          on time::date = err.err_ymd
+          group by ymd, err.err_count
+          order by percentage desc) as table_err_percent
     where table_err_percent.percentage > 1;
     ''')
     results = c.fetchall()
@@ -65,6 +65,7 @@ def pop_days():
     print "\n\n3. On which days did more than 1% of requests lead to errors?"
     for x, y in results:
         print "{} — {}% errors".format(x.strftime('%B %d, %Y'), round(y, 2))
+
 
 if __name__ == '__main__':
     pop_articles()
