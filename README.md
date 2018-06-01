@@ -13,15 +13,15 @@ This is a Udacity class project. The project is a reporting tool that displays S
 1. [`Clone`](https://github.com/purwin/Udacity_Log_Analysis.git) this project so you have a copy on your computer.
 2. Unzip `newsdata.sql.zip`.
 3. Start up your virtual machine. Run the following in Terminal if you're using Vagrant:
-* `vagrant up`
-* `vagrant ssh`
-* `cd /vagrant` to access project files
+  * `vagrant up`
+  * `vagrant ssh`
+  * `cd /vagrant` to access project files
 4. Load the SQL database data in `newsdata.sql`. Run the following in Terminal:
-* `psql -d news -f newsdata.sql`
+  * `psql -d news -f newsdata.sql`
 5. Run `newsdata.py` in Terminal to display the following queries:
-* 1. What are the most popular three articles of all time?
-* 2. Who are the most popular article authors of all time?
-* 3. On which days did more than 1% of requests lead to errors?
+  * What are the most popular three articles of all time?
+  * Who are the most popular article authors of all time?
+  * On which days did more than 1% of requests lead to errors?
 6. Check out those beautiful SQL query results!
 
 ## CONTRIBUTE
